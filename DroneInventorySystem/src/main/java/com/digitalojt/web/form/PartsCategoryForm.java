@@ -1,6 +1,5 @@
 package com.digitalojt.web.form;
 
-import com.digitalojt.web.consts.ErrorMessage;
 import com.digitalojt.web.validation.PartsCategoryFormValidator;
 
 import jakarta.validation.constraints.NotBlank;
@@ -28,8 +27,8 @@ public class PartsCategoryForm {
 	private Integer categoryId;
 	
 	// 部品カテゴリー名
-    @NotBlank(message = ErrorMessage.CATEGORY_NAME_REQUIRED)
-    @Size(max = 20, message = ErrorMessage.CATEGORY_NAME_INVALID_LENGTH)
+	@NotBlank(message = "{category.name.required}")
+	@Size(max = 20, message = "{category.name.invalid.length}")
 	private String categoryName;
     
     // 削除フラグ

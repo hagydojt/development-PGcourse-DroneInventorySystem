@@ -74,12 +74,8 @@ public class PartsCategoryService {
 	@Transactional
 	public void registerPartsCategory(@Valid PartsCategoryForm form) {
 
-		// 存在する場合は、重複登録例外をスロー
-		CategoryInfo entity = repository.getByCategoryName(form.getCategoryName());
-		if (entity != null) {
-			throw new DataIntegrityViolationException(messageSource
-					.getMessage(ErrorMessage.DATA_DUPLICATE_ERROR_MESSAGE, null, Locale.getDefault()));
-		}
+		// カテゴリー名重複チェック
+		categoryDuplicationCheck(form.getCategoryName());
 
 		// 部品カテゴリー情報テーブルのIDは、自動採番であるため、IDのセットは行わない。
 		// また、フォームからIDが送られてきた場合は不正な操作の可能性があるため、登録処理を行わないようにする。
@@ -106,23 +102,47 @@ public class PartsCategoryService {
 	public void updatePartsCategory(@Valid PartsCategoryForm form) {
 
 		// 存在しない場合は例外をスロー
-		CategoryInfo entity = repository.findById(form.getCategoryId())
-				.orElseThrow(() -> new EntityNotFoundException(messageSource
-						.getMessage(ErrorMessage.ININVALID_UPDATE_ERROR_MESSAGE, null, Locale.getDefault())));
-
-		Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
-		entity.setUpdateDate(currentTimestamp);
+		CategoryInfo entity = repository.findById(form.getCategoryId()).orElseThrow(() -> 
+					new EntityNotFoundException(messageSource.getMessage(
+							ErrorMessage.ININVALID_UPDATE_ERROR_MESSAGE
+							, null
+							, Locale.getDefault()))
+					);
 
 		// 削除か更新かで処理を分ける
 		if (form.getDeleteFlag()) {
-			// 削除の場合
+			// 削除の場合、削除フラグを更新
 			entity.setDeleteFlag(DeleteFlagConsts.DELETED);
 		} else {
+			// 重複チェック
+			categoryDuplicationCheck(form.getCategoryName());
+
 			// 更新の場合
 			entity.setCategoryName(form.getCategoryName());
 			entity.setDeleteFlag(DeleteFlagConsts.ACTIVE);
 		}
 
+	    // 更新日付をセット
+	    entity.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
 		repository.save(entity);
+	}
+	
+	/**
+	 * カテゴリー名重複チェック処理
+	 * @param categoryName カテゴリー名
+	 */
+	private void categoryDuplicationCheck(String categoryName) {
+
+		// 存在する場合は、重複登録例外をスロー
+		CategoryInfo duplicate = repository.getByCategoryName(categoryName);
+		if (duplicate != null) {
+			throw new DataIntegrityViolationException(
+					messageSource.getMessage(
+							ErrorMessage.DATA_DUPLICATE_ERROR_MESSAGE
+							, null
+							, Locale.getDefault()
+					)
+			);
+		}
 	}
 }

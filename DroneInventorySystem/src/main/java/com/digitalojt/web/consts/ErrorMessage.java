@@ -39,7 +39,7 @@ public class ErrorMessage {
 	public static final String OPERATION_DATE_FIELD_ERROR_MESSAGE = "operationLog.operationDateField.empty";
 	
 	// 不正なデータ登録に関するエラーメッセージ
-	public static final String DATA_DUPLICATE_ERROR_MESSAGE = "data.duplicate=";
+	public static final String DATA_DUPLICATE_ERROR_MESSAGE = "data.duplicate";
 	
 	// 不正なデータ登録に関するエラーメッセージ
 	public static final String ININVALID_REGISTRATION_ERROR_MESSAGE = "invalid.registration";

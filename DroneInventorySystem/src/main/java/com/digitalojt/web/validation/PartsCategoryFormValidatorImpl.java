@@ -29,9 +29,9 @@ public class PartsCategoryFormValidatorImpl implements ConstraintValidator<Parts
 		// 部品カテゴリー名が不正文字に含まれる場合にエラー処理
 		if (form.getCategoryName() != null && isValidCategoryName(form.getCategoryName())) {
 			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(
-					ErrorMessageHelper.getMessage(ErrorMessage.INVALID_INPUT_ERROR_MESSAGE))
-					.addConstraintViolation();
+			context.buildConstraintViolationWithTemplate(ErrorMessageHelper.getMessage(ErrorMessage.CATEGORY_NAME_FORBIDDEN))
+			.addPropertyNode("categoryName")
+			.addConstraintViolation();
 			return false;
 		}
 		
