@@ -41,7 +41,7 @@ public class PartsCategoryController extends AbstractController {
 	private final MessageSource messageSource;
 
 	/**
-	 * 部品カテゴリー情報テーブルから取得したデータを使用して画面の初期表示を実行する。
+	 * 部品カテゴリー情報画面の初期表示
 	 *
 	 * @param model Modelオブジェクト
 	 * @return String(Viewの名前：部品カテゴリー管理画面)
@@ -51,7 +51,7 @@ public class PartsCategoryController extends AbstractController {
 		
 		logStart(LogMessage.HTTP_GET);
 
-		// 部品カテゴリー情報 全件取得(部品カテゴリー管理画面のテーブルに表示するデータを取得)
+		// 部品カテゴリー情報 全件取得
 		List<CategoryInfo> searchResults = service.getCategoryInfoData();
 
 		// 画面表示用に部品カテゴリー情報リストをセット
@@ -69,7 +69,7 @@ public class PartsCategoryController extends AbstractController {
 	 * @param form フォームオブジェクト
 	 * @param bindingResult バリデーション結果
 	 * @param redirectAttributes リダイレクト時にフラッシュスコープでデータを渡すためのオブジェクト
-	 * @return String 検索結果がある場合は部品カテゴリー管理画面、エラー時はリダイレクト
+	 * @return 部品カテゴリー管理画面（エラー時はリダイレクト）
 	 */
 	@GetMapping(UrlConsts.PARTS_CATEGORY_SEARCH)
 	public String search(Model model, @Valid PartsCategoryForm form, BindingResult bindingResult,
@@ -81,26 +81,36 @@ public class PartsCategoryController extends AbstractController {
 		if (bindingResult.hasErrors()) {
 
 			// バリデーションエラーメッセージ取得をredirectAttributesに追加
-			redirectAttributes.addFlashAttribute(ModelAttributeContents.ERROR_MSG,
-					getValidationErrorMessage(bindingResult, form));
+			redirectAttributes.addFlashAttribute(
+					ModelAttributeContents.ERROR_MSG
+					,getValidationErrorMessage(bindingResult, form)
+			);
 			
-			return "redirect:" + UrlConsts.PARTS_CATEGORY; // 部品カテゴリー管理画面にリダイレクト
+			// 部品カテゴリー管理画面にリダイレクト
+			return "redirect:" + UrlConsts.PARTS_CATEGORY; 
 		}
 
-		// 部品カテゴリー名から、部品カテゴリー情報取得(部品カテゴリー管理画面のテーブルに表示する検索結果を取得)
+		// 部品カテゴリー情報取得
 		List<CategoryInfo> searchResults = service.getCategoryInfoData(form.getCategoryName());
 
 		// 検索結果が空の場合、エラーメッセージを表示しリダイレクト
 		if (searchResults.isEmpty()) {
 
 			// バリデーションエラーメッセージ取得をredirectAttributesに追加
-			redirectAttributes.addFlashAttribute(ModelAttributeContents.ERROR_MSG,
-					messageSource.getMessage(ErrorMessage.DATA_EMPTY_ERROR_MESSAGE, null, Locale.getDefault()));
+			redirectAttributes.addFlashAttribute(
+					ModelAttributeContents.ERROR_MSG
+					,messageSource.getMessage(
+							ErrorMessage.DATA_EMPTY_ERROR_MESSAGE
+							, null
+							, Locale.getDefault()
+					 )
+			);
 			
-			return "redirect:" + UrlConsts.PARTS_CATEGORY; // 部品カテゴリー管理画面にリダイレクト
+			// 部品カテゴリー管理画面にリダイレクト
+			return "redirect:" + UrlConsts.PARTS_CATEGORY; 
 		}
 
-		// 画面表示用に商品情報リストをセット
+		// 商品情報リストをセット
 		model.addAttribute(ModelAttributeContents.PARTS_CATEGORY_LIST, searchResults);
 		
 		logEnd(LogMessage.HTTP_GET);
@@ -147,7 +157,6 @@ public class PartsCategoryController extends AbstractController {
 
 		// 入力値のバリデーションチェック
 		if (bindingResult.hasErrors()) {
-
 			// バリデーションエラーメッセージ取得をredirectAttributesに追加
 			redirectAttributes.addFlashAttribute(ModelAttributeContents.ERROR_MSG,
 					getValidationErrorMessage(bindingResult, form));
@@ -159,7 +168,7 @@ public class PartsCategoryController extends AbstractController {
 		service.registerPartsCategory(form);
 
 		// 登録成功メッセージをフラッシュスコープに設定
-		redirectAttributes.addFlashAttribute(ModelAttributeContents.SUCCESS_MSG, "success");
+		redirectAttributes.addFlashAttribute(ModelAttributeContents.SUCCESS_MSG, "success.register");
 		
 		logEnd(LogMessage.HTTP_POST);
 
@@ -178,7 +187,7 @@ public class PartsCategoryController extends AbstractController {
 		
 		logStart(LogMessage.HTTP_GET);
 
-		// 部品カテゴリーIDから、部品カテゴリー情報取得(部品カテゴリー管理 更新/削除画面に表示するデータを取得)
+		// 部品カテゴリーIDから、部品カテゴリー情報取得
 		CategoryInfo categoryInfo = service.getCategoryInfoData(categoryId);
 
 		// 取得したデータを画面表示用にモデルへ追加
@@ -205,16 +214,20 @@ public class PartsCategoryController extends AbstractController {
 		if (bindingResult.hasErrors()) {
 
 			// バリデーションエラーメッセージ取得をredirectAttributesに追加
-			redirectAttributes.addFlashAttribute(ModelAttributeContents.ERROR_MSG,
-					getValidationErrorMessage(bindingResult, form));
-			return "redirect:" + UrlConsts.PARTS_CATEGORY_REGISTER + "/" + form.getCategoryId(); // 部品カテゴリー管理 更新/削除画面にリダイレクト
+			redirectAttributes.addFlashAttribute(
+					ModelAttributeContents.ERROR_MSG
+					,getValidationErrorMessage(bindingResult, form)
+			);
+			
+			// 部品カテゴリー管理 更新/削除画面にリダイレクト
+			return "redirect:" + UrlConsts.PARTS_CATEGORY_UPDATE + "/" + form.getCategoryId(); 
 		}
 
 		// 部品カテゴリー情報を登録
 		service.updatePartsCategory(form);
 
 		// 更新成功メッセージをフラッシュスコープに設定
-		redirectAttributes.addFlashAttribute(ModelAttributeContents.SUCCESS_MSG, "success");
+		redirectAttributes.addFlashAttribute(ModelAttributeContents.SUCCESS_MSG, "success.update");
 		
 		logEnd(LogMessage.HTTP_PATCH);
 
@@ -233,7 +246,7 @@ public class PartsCategoryController extends AbstractController {
 		StringBuilder errorMsg = new StringBuilder();
 
 		// フィールドごとのエラーメッセージを取得し、リストに追加
-		bindingResult.getGlobalErrors().forEach(error -> {
+		bindingResult.getFieldErrors().forEach(error -> {
 			String message = error.getDefaultMessage();
 			errorMsg.append(message).append("\r\n"); // メッセージを改行で区切って追加
 		});

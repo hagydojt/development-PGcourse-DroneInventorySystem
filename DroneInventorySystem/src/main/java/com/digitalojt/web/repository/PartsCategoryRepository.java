@@ -38,7 +38,7 @@ public interface PartsCategoryRepository extends JpaRepository<CategoryInfo, Int
 	 * 部品カテゴリー名に合致する部品カテゴリー情報を取得
 	 * 
 	 * @param categoryName
-	 * @return
+	 * @return 部品カテゴリー
 	 */
 	CategoryInfo getByCategoryName(String categoryName);
 }
