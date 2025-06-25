@@ -23,7 +23,9 @@ public class CenterInfoForm {
 
 	/**都道府県*/
 	private String region;
-
+	
+	/**管理者名*/
+	private String managerName;
 	/**
 	 * 容量(From)
 	 */

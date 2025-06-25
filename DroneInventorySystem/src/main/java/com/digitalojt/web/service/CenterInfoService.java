@@ -23,22 +23,24 @@ public class CenterInfoService {
 	private final CenterInfoRepository repository;
 
 	/**
-	 * 在庫センター情報を全建検索で取得
+	 * 在庫センター情報を全件検索で取得
 	 * 
 	 * @return
+	 * 
 	 */
 	public List<CenterInfo> getCenterInfoData() {
 		return repository.findAll();
 	}
-
+	
 	/**
 	 * 引数に合致する在庫センター情報を取得
 	 * 
 	 * @param centerName
 	 * @param region 
+	 * @param managerName
 	 * @return
 	 */
-	public List<CenterInfo> getCenterInfoData(String centerName, String region) {
-		return repository.findActiveCenters(centerName, region);
+	public List<CenterInfo> getCenterInfoData(String centerName, String region, String managerName) {
+		return repository.findActiveCenters(centerName, region, managerName);
 	}
 }

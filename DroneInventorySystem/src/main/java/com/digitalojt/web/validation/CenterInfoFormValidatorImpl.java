@@ -1,14 +1,14 @@
 package com.digitalojt.web.validation;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-
 import com.digitalojt.web.consts.ErrorMessage;
 import com.digitalojt.web.consts.InvalidCharacter;
 import com.digitalojt.web.consts.Region;
 import com.digitalojt.web.exception.ErrorMessageHelper;
 import com.digitalojt.web.form.CenterInfoForm;
 import com.digitalojt.web.util.InputValidator;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * 在庫センター情報のバリデーション処理実装
@@ -31,11 +31,10 @@ public class CenterInfoFormValidatorImpl implements ConstraintValidator<CenterIn
                    .addConstraintViolation();
             return false;
         }
-        
-        // センター名が不正文字に含まれる場合にエラー処理
-        if (isValidCenterName(form.getCenterName())) {
+        // センター名または管理者名に不正文字が含まれる場合にエラー処理
+        if (isValidCenterName(form.getCenterName()) || isValidManagerName(form.getManagerName())) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(ErrorMessageHelper.getMessage(ErrorMessage.ALL_FIELDS_EMPTY_ERROR_MESSAGE))
+            context.buildConstraintViolationWithTemplate(ErrorMessageHelper.getMessage(ErrorMessage.CATEGORY_NAME_FORBIDDEN))
                    .addConstraintViolation();
             return false;
         }
@@ -44,7 +43,7 @@ public class CenterInfoFormValidatorImpl implements ConstraintValidator<CenterIn
         if (!isValidRegion(form.getRegion())) {
             // 都道府県が無効な場合、エラーメッセージをスロー
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(ErrorMessageHelper.getMessage(ErrorMessage.ALL_FIELDS_EMPTY_ERROR_MESSAGE))
+            context.buildConstraintViolationWithTemplate(ErrorMessageHelper.getMessage(ErrorMessage.INVALID_INPUT_ERROR_MESSAGE))
                    .addConstraintViolation();
             return false;
         }
@@ -52,13 +51,27 @@ public class CenterInfoFormValidatorImpl implements ConstraintValidator<CenterIn
         // バリデーションが成功した場合はtrueを返す
         return true;
     }
-    
     /**
      * 文字列の不正文字チェックを実施する
      * @param input
      * @return
      */
     private boolean isValidCenterName(String input) {
+        // 文字列の各文字を1つずつチェック
+        for (char c : input.toCharArray()) {
+            // 不正文字が含まれているか確認
+            if (isInvalidCharacter(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * 文字列の不正文字チェックを実施する
+     * @param input
+     * @return
+     */
+    private boolean isValidManagerName(String input) {
         // 文字列の各文字を1つずつチェック
         for (char c : input.toCharArray()) {
             // 不正文字が含まれているか確認
@@ -113,7 +126,7 @@ public class CenterInfoFormValidatorImpl implements ConstraintValidator<CenterIn
      * @return すべてのフィールドがnullまたは空の場合はtrue、それ以外はfalse
      */
     private boolean isAllFieldsEmpty(CenterInfoForm form) {
-        // センター名または都道府県がnullまたは空の場合にtrueを返す
-        return form.getCenterName().isEmpty() && form.getRegion().isEmpty();
+        // センター名または都道府県または管理者名がnullまたは空の場合にtrueを返す
+        return form.getCenterName().isEmpty() && form.getRegion().isEmpty() && form.getManagerName().isEmpty();
     }
 }
